@@ -24,6 +24,7 @@ import org.apache.tsfile.exception.write.WriteProcessException;
 import org.apache.tsfile.file.metadata.IDeviceID;
 import org.apache.tsfile.file.metadata.PlainDeviceID;
 import org.apache.tsfile.utils.Binary;
+import org.apache.tsfile.utils.DateUtils;
 import org.apache.tsfile.write.UnSupportedDataTypeException;
 import org.apache.tsfile.write.record.Tablet;
 import org.apache.tsfile.write.record.datapoint.DataPoint;
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -111,7 +113,15 @@ public class NonAlignedChunkGroupWriterImpl implements IChunkGroupWriter {
           case INT32:
             chunkWriters.get(measurementId).write(time, ((int[]) tablet.values[column])[row]);
             break;
+          case DATE:
+            chunkWriters
+                .get(measurementId)
+                .write(
+                    time,
+                    DateUtils.parseDateExpressionToInt(((LocalDate[]) tablet.values[column])[row]));
+            break;
           case INT64:
+          case TIMESTAMP:
             chunkWriters.get(measurementId).write(time, ((long[]) tablet.values[column])[row]);
             break;
           case FLOAT:
@@ -124,6 +134,8 @@ public class NonAlignedChunkGroupWriterImpl implements IChunkGroupWriter {
             chunkWriters.get(measurementId).write(time, ((boolean[]) tablet.values[column])[row]);
             break;
           case TEXT:
+          case BLOB:
+          case STRING:
             chunkWriters.get(measurementId).write(time, ((Binary[]) tablet.values[column])[row]);
             break;
           default:

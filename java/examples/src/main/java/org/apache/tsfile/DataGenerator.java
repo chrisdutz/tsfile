@@ -17,37 +17,36 @@
  * under the License.
  */
 
-package org.apache.tsfile.read.common.type;
+package org.apache.tsfile;
 
+import org.apache.tsfile.common.conf.TSFileConfig;
 import org.apache.tsfile.enums.TSDataType;
+import org.apache.tsfile.utils.Binary;
 
-public class TypeFactory {
+import java.time.LocalDate;
 
-  private TypeFactory() {
-    // forbidding instantiation
-  }
-
-  public static Type getType(TSDataType tsDataType) {
-    switch (tsDataType) {
+public class DataGenerator {
+  public static Object generate(TSDataType type, int index) {
+    switch (type) {
       case INT32:
-      case DATE:
-        return IntType.getInstance();
+        return index;
       case INT64:
       case TIMESTAMP:
-        return LongType.getInstance();
+        return (long) index;
       case FLOAT:
-        return FloatType.getInstance();
+        return (float) index;
       case DOUBLE:
-        return DoubleType.getInstance();
+        return (double) index;
       case BOOLEAN:
-        return BooleanType.getInstance();
+        return index % 2 == 0;
+      case DATE:
+        return LocalDate.of(2024, 1, index % 30 + 1);
       case TEXT:
-      case BLOB:
       case STRING:
-        return BinaryType.getInstance();
+      case BLOB:
+        return new Binary(String.valueOf(index), TSFileConfig.STRING_CHARSET);
       default:
-        throw new UnsupportedOperationException(
-            String.format("Invalid TSDataType for TypeFactory: %s", tsDataType));
+        return null;
     }
   }
 }

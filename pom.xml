@@ -28,7 +28,7 @@
     </parent>
     <groupId>org.apache.tsfile</groupId>
     <artifactId>tsfile-parent</artifactId>
-    <version>1.0.1-ee39f42-Java11-SNAPSHOT</version>
+    <version>1.0.1-e1207ba-Java11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache TsFile Project Parent POM</name>
     <properties>
@@ -256,7 +256,7 @@
                             <fail>true</fail>
                         </configuration>
                     </execution>
-                    <!-- Ensure dependencies are compatible with Java 1 -->
+                    <!-- Ensure dependencies are compatible with Java 11 -->
                     <execution>
                         <id>enforce-java11-compatability</id>
                         <goals>
