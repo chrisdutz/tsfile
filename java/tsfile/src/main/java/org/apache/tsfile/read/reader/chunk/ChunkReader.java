@@ -99,7 +99,7 @@ public class ChunkReader extends AbstractChunkReader {
         && !queryFilter.satisfyStartEndTime(pageHeader.getStartTime(), pageHeader.getEndTime());
   }
 
-  private boolean pageDeleted(PageHeader pageHeader) {
+  protected boolean pageDeleted(PageHeader pageHeader) {
     if (readStopTime > pageHeader.getEndTime()) {
       // used for chunk reader by timestamp
       return true;
@@ -169,7 +169,11 @@ public class ChunkReader extends AbstractChunkReader {
     byte[] uncompressedPageData = new byte[pageHeader.getUncompressedSize()];
     try {
       unCompressor.uncompress(
-          compressedPageData.array(), 0, compressedPageBodyLength, uncompressedPageData, 0);
+          compressedPageData.array(),
+          compressedPageData.arrayOffset() + compressedPageData.position(),
+          compressedPageBodyLength,
+          uncompressedPageData,
+          0);
     } catch (Exception e) {
       throw new IOException(
           "Uncompress error! uncompress size: "
@@ -180,7 +184,7 @@ public class ChunkReader extends AbstractChunkReader {
               + pageHeader
               + e.getMessage());
     }
-
+    compressedPageData.position(compressedPageData.position() + compressedPageBodyLength);
     return ByteBuffer.wrap(uncompressedPageData);
   }
 
